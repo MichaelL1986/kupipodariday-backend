@@ -1,32 +1,33 @@
+import { User } from 'src/users/entities/user.entity';
 import { Injectable } from '@nestjs/common';
-import { User } from '../users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
-
+import { verifyHash } from 'src/helpers/hash';
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService,
-    private usersService: UsersService,
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
 
-  auth(user: User) {
-    const payload = { sub: user.id };
+  async validateUser(username: string, password: string): Promise<any> {
+    const user = await this.usersService.findOneQuery({
+      select: { username: true, password: true, id: true },
+      where: { username },
+    });
 
-    return { access_token: this.jwtService.sign(payload) };
+    if (user && (await verifyHash(password, user.password))) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
   }
 
-  async validatePassword(username: string, password: string) {
-    const user = await this.usersService.findByUsername(username);
+  async login(user: User) {
+    const { username, id: sub } = user;
 
-    /* В идеальном случае пароль обязательно должен быть захэширован */
-    if (user && user.password === password) {
-      /* Исключаем пароль из результата */
-      const { password, ...result } = user;
-
-      return user;
-    }
-
-    return null;
+    return {
+      access_token: await this.jwtService.signAsync({ username, sub }),
+    };
   }
 }

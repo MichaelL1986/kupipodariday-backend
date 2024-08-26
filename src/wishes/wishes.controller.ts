@@ -12,7 +12,7 @@ import {
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
-import { LocalGuard } from 'src/guards/local.guard';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('wishes')
 export class WishesController {
@@ -34,7 +34,7 @@ export class WishesController {
   }
 
   @Get(':id')
-  @UseGuards(LocalGuard)
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.wishesService.findOneQuery({
       where: { id: +id },
@@ -43,19 +43,19 @@ export class WishesController {
   }
 
   @Patch(':id')
-  @UseGuards(LocalGuard)
+  @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
     return this.wishesService.update(+id, updateWishDto);
   }
 
   @Delete(':id')
-  @UseGuards(LocalGuard)
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string, @Req() req) {
     return this.wishesService.remove(+id, req.user.userId);
   }
 
   @Post(':id/copy')
-  @UseGuards(LocalGuard)
+  @UseGuards(JwtAuthGuard)
   copyWish(@Param('id') id: string, @Req() req) {
     return this.wishesService.copy(+id, req.user.userId);
   }

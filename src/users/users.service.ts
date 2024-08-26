@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { FindOneOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import bcrypt from 'bcrypt';
@@ -21,6 +21,10 @@ export class UsersService {
 
   findOneQuery(query: FindOneOptions<User>) {
     return this.usersRepository.findOneOrFail(query);
+  }
+
+  findManyQuery(query: FindManyOptions<User>) {
+    return this.usersRepository.find(query);
   }
 
   async create(createUserDto: CreateUserDto) {

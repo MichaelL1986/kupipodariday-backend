@@ -9,10 +9,10 @@ import {
 } from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { LocalGuard } from 'src/guards/local.guard';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('offers')
-@UseGuards(LocalGuard)
+@UseGuards(JwtAuthGuard)
 export class OffersController {
   constructor(private readonly offersService: OffersService) {}
 

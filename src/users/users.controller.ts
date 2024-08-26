@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FindUsersDto } from './dto/find-users.dto';
 
 @Controller('users')
 export class UsersController {
@@ -40,5 +41,13 @@ export class UsersController {
   async getWishes(@Param('username') username: string) {
     const { id } = await this.usersService.findByUsername(username);
     return this.usersService.getWishes(id);
+  }
+
+  @Post('find')
+  findMany(@Body() findUsersDto: FindUsersDto) {
+    const { email, username } = findUsersDto;
+    return this.usersService.findManyQuery({
+      where: [{ email }, { username }],
+    });
   }
 }
