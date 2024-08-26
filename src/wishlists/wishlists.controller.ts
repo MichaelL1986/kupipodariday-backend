@@ -12,11 +12,16 @@ import {
 import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('wishlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
+
+  @Get()
+  findAll() {
+    return this.wishlistsService.findAll();
+  }
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -25,6 +30,7 @@ export class WishlistsController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   findOne(@Param('id') id: string) {
     return this.wishlistsService.findOne(+id);
   }

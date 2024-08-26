@@ -19,6 +19,10 @@ export class WishlistsService {
     return this.wishlistRepository.save({ ...createWishlistDto, owner });
   }
 
+  findAll() {
+    return this.wishlistRepository.find();
+  }
+
   findOne(id: number) {
     return this.wishlistRepository.findOneBy({ id });
   }

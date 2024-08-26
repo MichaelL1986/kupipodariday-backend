@@ -1,9 +1,6 @@
-import { IsEmail, IsString, Length } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class FindUsersDto {
-  @IsEmail()
-  email: string;
   @IsString()
-  @Length(10, 20)
-  username: string;
+  query: string;
 }

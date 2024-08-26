@@ -1,6 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Offer } from './entities/offer.entity';
 import { Repository } from 'typeorm';
@@ -21,6 +24,10 @@ export class OffersService {
     const owner = await this.usersService.findOne(userId);
     const wish = await this.wishesService.findOne(itemId);
 
+    if (wish.owner !== owner) {
+      throw new ForbiddenException('Операция запрещена');
+    }
+
     const raised = wish.raised + amount;
     if (raised > wish.price) {
       throw new BadRequestException({
@@ -40,5 +47,9 @@ export class OffersService {
 
   findOne(id: number) {
     return this.offersRepository.findOneByOrFail({ id });
+  }
+
+  findAll() {
+    return this.offersRepository.find();
   }
 }
