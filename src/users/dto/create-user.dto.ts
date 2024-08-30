@@ -6,7 +6,7 @@ export class CreateUserDto {
   @IsString()
   password: string;
   @IsString()
-  @Length(10, 20)
+  @Length(2, 30)
   username: string;
   @IsUrl()
   @IsOptional()

@@ -21,7 +21,7 @@ export class User {
   updatedAt: Date;
 
   @Column({ unique: true })
-  @Length(10, 20)
+  @Length(2, 30)
   username: string;
   @Column({ default: 'Пока ничего не рассказал о себе' })
   @IsString()
