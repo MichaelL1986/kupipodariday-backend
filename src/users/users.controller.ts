@@ -13,18 +13,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindUsersDto } from './dto/find-users.dto';
-import { User } from './entities/user.entity';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Like } from 'typeorm';
-
-const excludePassword = (user: User | User[]) => {
-  if (Array.isArray(user)) {
-    return user.map(({ password: _, ...other }) => other);
-  } else {
-    const { password: _, ...other } = user;
-    return other;
-  }
-};
 
 @Controller('users')
 export class UsersController {
@@ -33,13 +23,13 @@ export class UsersController {
   @Post()
   // @HttpCode(201) by default
   async create(@Body() createUserDto: CreateUserDto) {
-    return excludePassword(await this.usersService.create(createUserDto));
+    return await this.usersService.create(createUserDto);
   }
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getMe(@Req() req) {
-    return excludePassword(await this.usersService.findOne(req.user.userId));
+    return await this.usersService.findOne(req.user.userId);
   }
 
   @Patch('me')
@@ -61,7 +51,7 @@ export class UsersController {
   @Get(':username')
   @UseGuards(JwtAuthGuard)
   async getUser(@Param('username') username: string) {
-    return excludePassword(await this.usersService.findByUsername(username));
+    return await this.usersService.findByUsername(username);
   }
 
   @Get(':username/wishes')
@@ -75,14 +65,8 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(200)
   async findMany(@Body() { query }: FindUsersDto) {
-    return excludePassword(
-      // WHERE email = query OR username = query
-      await this.usersService.findManyQuery({
-        where: [
-          { username: Like(`%${query}%`) },
-          { email: Like(`%${query}%`) },
-        ],
-      }),
-    );
+    return await this.usersService.findManyQuery({
+      where: [{ username: Like(`%${query}%`) }, { email: Like(`%${query}%`) }],
+    });
   }
 }

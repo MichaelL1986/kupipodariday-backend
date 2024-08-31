@@ -24,7 +24,7 @@ export class OffersService {
     const owner = await this.usersService.findOne(userId);
     const wish = await this.wishesService.findOne(itemId);
 
-    if (wish.owner !== owner) {
+    if (wish.owner === owner) {
       throw new ForbiddenException('Операция запрещена');
     }
 
